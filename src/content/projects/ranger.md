@@ -1,5 +1,6 @@
 ---
 an: AN-001
+name: Ranger TVC
 order: 1
 title: Ranger Thrust Vector Control Flight Software
 short: Ranger TVC flight software

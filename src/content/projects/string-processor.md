@@ -1,5 +1,6 @@
 ---
 an: AN-005
+name: String Processor
 order: 5
 title: String Processor Architecture
 short: String processor research

@@ -11,6 +11,7 @@ import { PART, NAME, TITLE, EMAIL, GITHUB, LINKEDIN } from '../data/site';
 
 const notes = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const anHref = Object.fromEntries(notes.map((n) => [n.data.an, `/notes/${n.id}/`]));
+const anName = Object.fromEntries(notes.map((n) => [n.data.an, n.data.name]));
 const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
 ---
 
@@ -36,7 +37,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
           <li>Presidential Scholar · Viterbi Scholar · CURVE Research Fellow</li>
         </ul>
         <p class="cta">
-          <a class="cta-primary" href={anHref['AN-001']}>Read AN-001: Ranger TVC</a>
+          <a class="cta-primary" href={anHref['AN-001']}>Read the Ranger TVC note</a>
           <a class="cta-mail mono" href={`mailto:${EMAIL}`}>{EMAIL}</a>
         </p>
       </div>
@@ -74,11 +75,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
                     )}
                   </td>
                   <td class="mono muted">{p.type}</td>
-                  <td>
-                    {p.fn.split(/(AN-\d{3})/).map((part) =>
-                      /^AN-\d{3}$/.test(part) ? <span class="nowrap">{part}</span> : part,
-                    )}
-                  </td>
+                  <td>{p.fn}</td>
                 </tr>
               ))
             }
@@ -104,7 +101,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
                     <td>{r.cond}</td>
                     <td class="mono refs">
                       {r.refs.map((ref) => (
-                        <a href={anHref[ref]}>{ref}</a>
+                        <a href={anHref[ref]}>{anName[ref]}</a>
                       ))}
                     </td>
                   </tr>
@@ -128,13 +125,12 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
         <table class="ds an-index">
           <caption><b>Table 3.</b> Projects, one application note each.</caption>
           <thead>
-            <tr><th scope="col">No.</th><th scope="col">Title</th><th scope="col">Key spec</th><th scope="col">Status</th></tr>
+            <tr><th scope="col">Project</th><th scope="col">Key spec</th><th scope="col">Status</th></tr>
           </thead>
           <tbody>
             {
               notes.map((n) => (
                 <tr>
-                  <td class="num">{n.data.an}</td>
                   <td>
                     <a class="an-title" href={`/notes/${n.id}/`}>{n.data.title}</a>
                     <span class="an-org">{n.data.org}</span>
@@ -170,7 +166,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
                       {r.an && (
                         <>
                           {' '}
-                          <a class="mono" href={anHref[r.an]}>{r.an}</a>
+                          <a href={anHref[r.an]}>{anName[r.an]}</a>
                         </>
                       )}
                     </span>
@@ -343,12 +339,15 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
   .ec .refs {
     white-space: nowrap;
     width: 1%;
+    font-size: 0.8125rem;
+  }
+  .ec .refs a {
+    display: block;
   }
   .ec .refs a + a {
-    margin-left: 0.6rem;
+    margin-top: 0.2rem;
   }
 
-  .an-index td:first-child,
   .revs td:first-child {
     width: 4.5rem;
     white-space: nowrap;
@@ -363,7 +362,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
     color: var(--ink-2);
     font-size: 0.875rem;
   }
-  .an-index td:nth-child(3) {
+  .an-index td:nth-child(2) {
     white-space: nowrap;
   }
 
@@ -540,7 +539,17 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
     .revs thead {
       display: none;
     }
-    .an-index tr,
+    .an-index tr {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.3rem;
+      padding-block: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .an-index td:nth-child(2) {
+      color: var(--copper);
+      white-space: normal;
+    }
     .revs tr {
       display: grid;
       grid-template-columns: auto 1fr;
@@ -553,19 +562,6 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       border: 0;
       padding: 0;
       width: auto !important;
-    }
-    .an-index td:nth-child(2) {
-      grid-column: 1 / -1;
-      grid-row: 2;
-    }
-    .an-index td:nth-child(3) {
-      grid-row: 1;
-      grid-column: 2;
-      justify-self: start;
-      color: var(--copper);
-    }
-    .an-index td:nth-child(4) {
-      grid-column: 1 / -1;
     }
     .revs td:nth-child(3) {
       grid-column: 1 / -1;

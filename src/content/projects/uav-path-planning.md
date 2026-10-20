@@ -1,5 +1,6 @@
 ---
 an: AN-002
+name: UAV Path Planning
 order: 2
 title: UAV 3D Path Planning
 short: UAV 3D path planning

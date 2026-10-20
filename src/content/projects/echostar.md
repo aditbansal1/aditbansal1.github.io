@@ -1,5 +1,6 @@
 ---
 an: AN-003
+name: EchoStar Pipeline
 order: 3
 title: Network Configuration Automation Pipeline
 short: Network config automation

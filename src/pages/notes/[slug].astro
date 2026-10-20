@@ -5,6 +5,7 @@ import RangerControlCycle from '../../components/figures/RangerControlCycle.astr
 import UavTurnRadius from '../../components/figures/UavTurnRadius.astro';
 import EchoStarPipeline from '../../components/figures/EchoStarPipeline.astro';
 import CarryChain from '../../components/figures/CarryChain.astro';
+import SolarPvCurve from '../../components/figures/SolarPvCurve.astro';
 
 export async function getStaticPaths() {
   const notes = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
@@ -27,6 +28,10 @@ const figures = {
     Comp: EchoStarPipeline,
     caption: 'Pipeline stages. Validation gates everything downstream.',
     wide: true,
+  },
+  'solar-mppt': {
+    Comp: SolarPvCurve,
+    caption: 'What MPPT tracks: the power peak moves as conditions change. Illustrative curves, not simulation output.',
   },
   'string-processor': {
     Comp: CarryChain,

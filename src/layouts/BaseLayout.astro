@@ -29,8 +29,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
-    <meta name="theme-color" content="#f6f7f4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0c1912" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f7f4" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href={archivoUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={monoUrl} as="font" type="font/woff2" crossorigin />
@@ -40,9 +39,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         d.classList.add('js');
         var t = null;
         try { t = localStorage.getItem('theme'); } catch (e) {}
-        if (t !== 'light' && t !== 'dark') {
-          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
+        if (t !== 'dark') t = 'light';
         d.dataset.theme = t;
       })();
     </script>

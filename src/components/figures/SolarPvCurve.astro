@@ -1,0 +1,155 @@
+---
+// Illustrative PV power–voltage curves (single-diode shape), not project data.
+const W = 560;
+const H = 270;
+const x0 = 56;
+const y0 = 220;
+const plotW = 470;
+const plotH = 180;
+const voc = 1;
+const a = 0.06;
+const curve = (isc: number, vo: number) => {
+  const pts: [number, number][] = [];
+  for (let i = 0; i <= 100; i++) {
+    const v = (i / 100) * vo;
+    const iv = Math.max(0, isc * (1 - Math.exp((v - vo) / a)));
+    pts.push([v, v * iv]);
+  }
+  return pts;
+};
+const full = curve(1, voc);
+const low = curve(0.6, 0.86 * voc);
+const pmax = Math.max(...full.map((p) => p[1]));
+const sx = (v: number) => x0 + (v / voc) * plotW;
+const sy = (p: number) => y0 - (p / pmax) * plotH * 0.92;
+const path = (pts: [number, number][]) => pts.map(([v, p], i) => `${i ? 'L' : 'M'}${sx(v).toFixed(1)} ${sy(p).toFixed(1)}`).join(' ');
+const peak = (pts: [number, number][]) => pts.reduce((m, p) => (p[1] > m[1] ? p : m));
+const [v1, p1] = peak(full);
+const [v2, p2] = peak(low);
+---
+
+<div class="fig-scroll">
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="pv-t pv-d" class="pv">
+    <title id="pv-t">Power versus voltage for a solar panel, with the maximum power point</title>
+    <desc id="pv-d">
+      Two illustrative power-voltage curves. Power rises with voltage, peaks at the maximum power point, then
+      falls steeply. When conditions change the curve drops and its peak shifts, and closed-loop MPPT control
+      moves the operating point to follow the new peak.
+    </desc>
+
+    <defs>
+      <marker id="pv-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0 1 L9 5 L0 9" class="arrowhead" />
+      </marker>
+    </defs>
+
+    <g class="axis">
+      <line x1={x0} y1={y0} x2={x0 + plotW + 8} y2={y0} />
+      <line x1={x0} y1={y0} x2={x0} y2={y0 - plotH - 12} />
+      <text x={x0 + plotW + 8} y={y0 + 22} text-anchor="end">Voltage</text>
+      <text x={x0 - 10} y={y0 - plotH - 18} text-anchor="start">Power</text>
+    </g>
+
+    <path class="curve" d={path(full)} />
+    <path class="curve low" d={path(low)} />
+
+    <line class="drop" x1={sx(v1)} y1={sy(p1)} x2={sx(v1)} y2={y0} />
+    <line class="drop" x1={x0} y1={sy(p1)} x2={sx(v1)} y2={sy(p1)} />
+    <circle class="mpp" cx={sx(v1)} cy={sy(p1)} r="5" />
+    <text class="lbl" x={sx(v1) - 10} y={sy(p1) - 12} text-anchor="end">MPP</text>
+
+    <circle class="mpp low-mpp" cx={sx(v2)} cy={sy(p2)} r="4.5" />
+    <path class="track" d={`M${sx(v1) - 7} ${sy(p1) + 4} C ${sx(v1) - 30} ${sy(p1) + 20}, ${sx(v2) + 4} ${sy(p2) - 34}, ${sx(v2) + 1} ${sy(p2) - 9}`} marker-end="url(#pv-arrow)" />
+
+  </svg>
+</div>
+<ul class="legend mono">
+  <li><span class="sw copper-sw" aria-hidden="true"></span>Reference conditions</li>
+  <li><span class="sw signal-sw" aria-hidden="true"></span>Changed conditions</li>
+  <li><span class="dot" aria-hidden="true"></span>MPP: the controller moves the operating point to the new peak</li>
+</ul>
+
+<style>
+  .fig-scroll {
+    overflow-x: auto;
+  }
+  .pv {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    font-family: var(--font-mono);
+  }
+  .axis line {
+    stroke: var(--ink);
+    stroke-width: 1.25;
+  }
+  .axis text {
+    font-size: 15px;
+    fill: var(--ink-2);
+  }
+  .curve {
+    fill: none;
+    stroke: var(--copper);
+    stroke-width: 2.5;
+  }
+  .curve.low {
+    stroke: var(--signal);
+    stroke-dasharray: 6 4;
+  }
+  .drop {
+    stroke: var(--ink-2);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+  .mpp {
+    fill: var(--paper);
+    stroke: var(--copper);
+    stroke-width: 2.5;
+  }
+  .low-mpp {
+    stroke: var(--signal);
+  }
+  .lbl {
+    font-size: 16px;
+    fill: var(--ink);
+  }
+  .track {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.25;
+  }
+  .arrowhead {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .legend {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.5rem;
+    font-size: 0.75rem;
+  }
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .sw {
+    width: 1.5rem;
+    height: 0;
+    border-top: 2.5px solid var(--copper);
+  }
+  .signal-sw {
+    border-top: 2.5px dashed var(--signal);
+  }
+  .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    border: 2px solid var(--copper);
+  }
+</style>

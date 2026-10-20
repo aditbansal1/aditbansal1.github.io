@@ -1,5 +1,6 @@
 ---
 an: AN-004
+name: Solar MPPT
 order: 4
 title: Solar MPPT Closed-Loop Control Modeling
 short: Solar MPPT control
