@@ -4,15 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Pinout from '../components/Pinout.astro';
 import Section from '../components/Section.astro';
 import StatusMark from '../components/StatusMark.astro';
-import { leftPins, rightPins } from '../data/pins';
 import { skills } from '../data/skills';
 import { revisions } from '../data/experience';
-import { PART, NAME, TITLE, EMAIL, GITHUB, LINKEDIN } from '../data/site';
+import { NAME, TITLE, EMAIL, GITHUB, LINKEDIN } from '../data/site';
 
 const notes = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const anHref = Object.fromEntries(notes.map((n) => [n.data.an, `/notes/${n.id}/`]));
 const anName = Object.fromEntries(notes.map((n) => [n.data.an, n.data.name]));
-const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
 ---
 
 <BaseLayout
@@ -24,7 +22,8 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       <div class="title-block">
         <h1 id="name">{NAME}</h1>
         <p class="subtitle">
-          Embedded and electrical engineer. B.S. Electrical and Computer Engineering, USC Viterbi, May 2028.
+          Embedded flight software for the USC Liquid Propulsion Lab’s Ranger VTVL hopper. B.S. Electrical and
+          Computer Engineering, USC Viterbi, May 2028.
         </p>
 
         <h2 class="features-h"><span class="n mono">1</span>Features</h2>
@@ -34,7 +33,6 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
           <li>Latched-fault safety supervisor, <b>~50</b> host unit tests (native_sim + ztest)</li>
           <li>A*, RRT*, Hybrid A* compared across <b>100+</b> simulated 3D environments</li>
           <li>Carrier config intake cut from multiple days to <b>&lt; 15 min</b> at EchoStar</li>
-          <li>Presidential Scholar · Viterbi Scholar · CURVE Research Fellow</li>
         </ul>
         <p class="cta">
           <a class="cta-primary" href={anHref['AN-001']}>Read the Ranger TVC note</a>
@@ -46,48 +44,10 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       </div>
     </section>
 
-    <Section num="2" title="Description" id="description">
-      <p class="lede">
-        {NAME} is an electrical and computer engineering student at USC Viterbi who writes embedded flight
-        software. Current work: thrust vector control firmware for Ranger, the USC Liquid Propulsion Lab’s VTVL
-        hopper, on the GNC team. Research: real-time UAV path planning as a CURVE research fellow. Industry: network
-        configuration automation as a network engineering intern at EchoStar, summer 2026.
-      </p>
-    </Section>
-
-    <Section num="3" title="Pin Configuration and Functions" id="pin-functions">
-      <div class="table-scroll">
-        <table class="ds pins">
-          <caption><b>Table 1.</b> Pin functions. CORE = core skill; I/O = link.</caption>
-          <thead>
-            <tr><th scope="col">Pin</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Description</th></tr>
-          </thead>
-          <tbody>
-            {
-              allPins.map((p) => (
-                <tr data-pin={p.n}>
-                  <td class="num">{p.n}</td>
-                  <td class="mono">
-                    {p.href ? (
-                      <a href={p.href} {...(p.external ? { rel: 'me noopener' } : {})}>{p.name}</a>
-                    ) : (
-                      p.name
-                    )}
-                  </td>
-                  <td class="mono muted">{p.type}</td>
-                  <td>{p.fn}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
-    </Section>
-
-    <Section num="4" title="Electrical Characteristics" id="electrical-characteristics">
+    <Section num="2" title="Electrical Characteristics" id="electrical-characteristics">
       <div class="table-scroll">
         <table class="ds ec">
-          <caption><b>Table 2.</b> Skills, with the conditions under which each was demonstrated.</caption>
+          <caption><b>Table 1.</b> Skills, with the conditions under which each was demonstrated.</caption>
           <thead>
             <tr><th scope="col">Parameter</th><th scope="col">Test conditions</th><th scope="col">Ref</th></tr>
           </thead>
@@ -120,10 +80,10 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       </div>
     </Section>
 
-    <Section num="5" title="Application Notes" id="application-notes">
+    <Section num="3" title="Application Notes" id="application-notes">
       <div class="table-scroll">
         <table class="ds an-index">
-          <caption><b>Table 3.</b> Projects, one application note each.</caption>
+          <caption><b>Table 2.</b> Projects, one application note each.</caption>
           <thead>
             <tr><th scope="col">Project</th><th scope="col">Key spec</th><th scope="col">Status</th></tr>
           </thead>
@@ -145,10 +105,10 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       </div>
     </Section>
 
-    <Section num="6" title="Revision History" id="revision-history">
+    <Section num="4" title="Revision History" id="revision-history">
       <div class="table-scroll">
         <table class="ds revs">
-          <caption><b>Table 4.</b> Experience, newest first.</caption>
+          <caption><b>Table 3.</b> Experience, newest first.</caption>
           <thead>
             <tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Changes</th></tr>
           </thead>
@@ -162,13 +122,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
                     <span class="rev-role">{r.role}</span>
                     <span class="rev-org">{r.org}</span>
                     <span class="rev-note">
-                      {r.note}
-                      {r.an && (
-                        <>
-                          {' '}
-                          <a href={anHref[r.an]}>{anName[r.an]}</a>
-                        </>
-                      )}
+                      {r.an ? <a href={anHref[r.an]}>{anName[r.an]} application note</a> : r.note}
                     </span>
                   </td>
                 </tr>
@@ -179,24 +133,22 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       </div>
     </Section>
 
-    <Section num="7" title="Ordering Information" id="ordering-information">
+    <Section num="5" title="Ordering Information" id="ordering-information">
       <figure class="decode" aria-labelledby="decode-cap">
         <p class="decode-part mono" aria-hidden="true"><span>AB</span><span class="sep">-</span><span>ECE</span><span>28</span></p>
         <dl class="decode-fields">
           <div><dt class="mono">AB</dt><dd>Initials: Adit Bansal</dd></div>
-          <div><dt class="mono">ECE</dt><dd>Electrical and Computer Engineering</dd></div>
-          <div><dt class="mono">28</dt><dd>Graduation: May 2028</dd></div>
+          <div><dt class="mono">ECE</dt><dd>Major</dd></div>
+          <div><dt class="mono">28</dt><dd>Graduation year</dd></div>
         </dl>
         <figcaption id="decode-cap" class="mono"><b>Figure 2.</b> Part number decode.</figcaption>
       </figure>
       <div class="order">
         <div class="table-scroll">
           <table class="ds">
-            <caption><b>Table 5.</b> Education and work authorization.</caption>
+            <caption><b>Table 4.</b> Education and work authorization.</caption>
             <tbody>
-              <tr><th scope="row" class="param">Part number</th><td class="mono">{PART}</td></tr>
-              <tr><th scope="row" class="param">Degree</th><td>B.S. Electrical and Computer Engineering</td></tr>
-              <tr><th scope="row" class="param">Institution</th><td>University of Southern California, Viterbi School of Engineering</td></tr>
+              <tr><th scope="row" class="param">Degree</th><td>B.S. Electrical and Computer Engineering, USC Viterbi School of Engineering</td></tr>
               <tr><th scope="row" class="param">Dates</th><td class="mono">Aug 2024 – May 2028</td></tr>
               <tr><th scope="row" class="param">Honors</th><td>Presidential Scholar, Viterbi Scholar, CURVE Research Fellowship</td></tr>
               <tr><th scope="row" class="param">Coursework</th><td>Embedded Systems, Linear Circuits, Linear Systems, Distributed Systems</td></tr>
@@ -312,22 +264,6 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
   .figure-block {
     padding-top: 0.5rem;
     align-self: center;
-  }
-
-  .lede {
-    font-size: var(--step-1);
-    line-height: 1.5;
-    max-width: 62ch;
-  }
-
-  .pins tr:global(.is-lit) > * {
-    background: var(--copper-soft);
-  }
-  .pins td:first-child {
-    width: 3rem;
-  }
-  .pins td:nth-child(2) {
-    white-space: nowrap;
   }
 
   .ec .param {
@@ -565,10 +501,6 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
     }
     .revs td:nth-child(3) {
       grid-column: 1 / -1;
-    }
-    .pins td:nth-child(3),
-    .pins th:nth-child(3) {
-      display: none;
     }
   }
 </style>
