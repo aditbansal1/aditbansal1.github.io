@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-20T08:57:06.591895Z",
+  "title": "Design System: AB-ECE28 Datasheet",
+  "extensions": {
+    "colorMeta": {
+      "copper": {
+        "role": "primary",
+        "displayName": "Copper Trace"
+      },
+      "signal": {
+        "role": "secondary",
+        "displayName": "Signal Blue"
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Datasheet Paper"
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink"
+      },
+      "pcb-paper": {
+        "role": "neutral",
+        "displayName": "Soldermask"
+      },
+      "pcb-ink": {
+        "role": "neutral",
+        "displayName": "Silkscreen"
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Name on home, application note titles."
+      },
+      "headline": {
+        "displayName": "Section",
+        "purpose": "Numbered datasheet section headings."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Table heads, strip, stamps, captions."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Values, units, pins, references."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Trace and rule draw-in."
+      },
+      {
+        "name": "trace-draw",
+        "value": "700ms, 55ms stagger per pin",
+        "purpose": "Pinout traces drawing outward from leads."
+      },
+      {
+        "name": "rule-draw",
+        "value": "900ms",
+        "purpose": "Section trace rules drawing on scroll."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "40rem"
+      },
+      {
+        "name": "hero-split",
+        "value": "64rem"
+      },
+      {
+        "name": "note-glance-split",
+        "value": "72rem"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Single primary action, e.g. Read AN-001.",
+      "html": "<a class=\"ds-btn\" href=\"#\">Read AN-001: Ranger TVC</a>",
+      "css": ".ds-btn{display:inline-block;padding:.7rem 1rem;background:var(--ink,#141f19);color:var(--paper,#f6f7f4);text-decoration:none;font-weight:600;border-radius:2px;transition:background-color 160ms ease}.ds-btn:hover{background:var(--signal,#1d55b5)}.ds-btn:focus-visible{outline:2px solid var(--signal,#1d55b5);outline-offset:3px}"
+    },
+    {
+      "name": "Status Stamp",
+      "kind": "chip",
+      "refersTo": "status-stamp",
+      "description": "PRELIMINARY / ADVANCE INFORMATION markings.",
+      "html": "<span class=\"ds-stamp\">Preliminary</span>",
+      "css": ".ds-stamp{font-family:'Fragment Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--copper,#a14f17);border:1.5px solid currentColor;padding:.15rem .45rem;border-radius:2px}"
+    },
+    {
+      "name": "Document Strip",
+      "kind": "nav",
+      "refersTo": "part-number",
+      "description": "Top strip with part number, document label, revision and links.",
+      "html": "<header class=\"ds-strip\"><a class=\"ds-part\" href=\"#\">AB-ECE28</a><span class=\"ds-lbl\">DATASHEET</span><nav><a href=\"#\">NOTES</a><a href=\"#\">CONTACT</a></nav></header>",
+      "css": ".ds-strip{display:flex;gap:1.25rem;align-items:stretch;min-height:2.75rem;border-bottom:1px solid var(--ink,#141f19);font-family:'Fragment Mono',ui-monospace,monospace;font-size:.75rem;letter-spacing:.04em}.ds-part{display:flex;align-items:center;padding:0 .75rem;background:var(--ink,#141f19);color:var(--paper,#f6f7f4);text-decoration:none}.ds-part:hover{background:var(--copper,#a14f17)}.ds-lbl{display:flex;align-items:center;color:var(--ink-2,#47534c)}.ds-strip nav{margin-left:auto;display:flex;gap:1rem;align-items:center}.ds-strip nav a{color:var(--ink,#141f19);text-decoration:none}.ds-strip nav a:hover{color:var(--signal,#1d55b5);text-decoration:underline}"
+    },
+    {
+      "name": "Datasheet Table",
+      "kind": "custom",
+      "description": "Ruled table for specs, skills, notes and revisions.",
+      "html": "<table class=\"ds-t\"><thead><tr><th>Parameter</th><th>Value</th><th>Conditions</th></tr></thead><tbody><tr><th>Command latency</th><td class=\"v\">&lt; 5 ms</td><td>Per actuator, send to reply</td></tr><tr><th>Control loop</th><td class=\"v\">50 Hz</td><td>Fixed-period kernel timer</td></tr></tbody></table>",
+      "css": ".ds-t{width:100%;border-collapse:collapse;border-top:2px solid var(--ink,#141f19);border-bottom:2px solid var(--ink,#141f19);font-size:.9375rem}.ds-t th,.ds-t td{text-align:left;padding:.55rem .9rem .55rem 0;border-bottom:1px solid var(--rule,#c5ccc6)}.ds-t thead th{font-family:'Fragment Mono',ui-monospace,monospace;font-size:.75rem;font-weight:400;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2,#47534c);border-bottom:1px solid var(--ink,#141f19)}.ds-t tbody th{font-weight:550}.ds-t .v{font-family:'Fragment Mono',ui-monospace,monospace;color:var(--copper,#a14f17)}"
+    },
+    {
+      "name": "Pin Label",
+      "kind": "custom",
+      "description": "Pinout label with trace; lit on hover/focus.",
+      "html": "<span class=\"ds-pin\"><button class=\"ds-pin-l\">CAN-FD</button><span class=\"ds-tr\"></span><span class=\"ds-ld\"></span></span>",
+      "css": ".ds-pin{display:flex;align-items:center;width:16rem}.ds-pin-l{font-family:'Fragment Mono',ui-monospace,monospace;font-size:.875rem;padding:.45rem .5rem;border:0;background:none;border-radius:2px;color:var(--ink,#141f19);cursor:pointer}.ds-pin-l:hover,.ds-pin-l:focus-visible{background:var(--copper,#a14f17);color:var(--paper,#f6f7f4)}.ds-tr{flex:1;height:2px;background:var(--copper,#a14f17)}.ds-ld{width:1rem;height:.5rem;background:var(--lead,#9ba29d)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Component Datasheet",
+    "overview": "The site is a datasheet for an engineer, page 1 first. It borrows the reader's own document: a part number in the strip, a pinout as the hero, numbered sections, ruled tables, figure and table captions, status stamps, and errata. Every value on the page is a measured, sourced number. Decoration comes only from the datasheet's own vocabulary and the circuit board it describes.",
+    "keyCharacteristics": [
+      "Pinout hero that doubles as navigation (link pins are real anchors).",
+      "Numbered datasheet sections, each opened by a copper trace rule.",
+      "Ruled tables (2px top and bottom, hairline rows) for all structured content.",
+      "Mono for data, units, labels, captions; condensed Archivo for display, normal-width Archivo for reading.",
+      "Status stamps (PRELIMINARY, ADVANCE INFORMATION) used only where the status is true."
+    ],
+    "rules": [
+      {
+        "name": "The Two Traces Rule",
+        "body": "Copper and signal blue are the only accents. Copper means \"this is the work\"; blue means \"you can go here\". Never swap them, never add a third.",
+        "section": "colors"
+      },
+      {
+        "name": "The PCB Rule",
+        "body": "Dark mode is soldermask green-black, never neutral gray or pure black; text is silkscreen off-white.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mono Means Data Rule",
+        "body": "Mono is for values, units, identifiers, pins, and captions. Never for prose or headings.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do source every number from content/ and label simulated or schematic material as such.",
+      "Do use the datasheet's own devices (sections, tables, captions, stamps, errata) instead of cards.",
+      "Do keep copper for the work and blue for links.",
+      "Do keep motion to traces drawing in, and render them fully drawn under reduced motion."
+    ],
+    "donts": [
+      "Don't use gradients, glassmorphism, drop shadows, or card grids.",
+      "Don't add proficiency bars, ratings, or invented specs.",
+      "Don't put eyebrow labels above headings; the section number sits inline in the heading.",
+      "Don't use mono for prose."
+    ]
+  }
+}

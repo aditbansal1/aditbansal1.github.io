@@ -1,0 +1,578 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Pinout from '../components/Pinout.astro';
+import Section from '../components/Section.astro';
+import StatusMark from '../components/StatusMark.astro';
+import { leftPins, rightPins } from '../data/pins';
+import { skills } from '../data/skills';
+import { revisions } from '../data/experience';
+import { PART, NAME, EMAIL, GITHUB, LINKEDIN } from '../data/site';
+
+const notes = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const anHref = Object.fromEntries(notes.map((n) => [n.data.an, `/notes/${n.id}/`]));
+const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
+---
+
+<BaseLayout
+  title={`${NAME} · Embedded & Aerospace Software Engineer`}
+  description="Adit Bansal, USC ECE '28. Embedded flight software for the Ranger VTVL hopper: Zephyr RTOS, C++, CAN-FD. Datasheet-style portfolio with application notes."
+>
+  <div class="wrap">
+    <section class="hero" aria-labelledby="name">
+      <div class="title-block">
+        <h1 id="name">{NAME}</h1>
+        <p class="subtitle">
+          Embedded and aerospace software engineer. B.S. Electrical and Computer Engineering, USC Viterbi, May 2028.
+        </p>
+
+        <h2 class="features-h"><span class="n mono">1</span>Features</h2>
+        <ul class="features">
+          <li>Deterministic <b>50 Hz</b> thrust vector control loop on Zephyr RTOS, Cortex-M7 flight computer</li>
+          <li><b>&lt; 5 ms</b> CAN-FD command latency to two gimbal actuators, measured per actuator</li>
+          <li>Latched-fault safety supervisor, <b>~50</b> host unit tests (native_sim + ztest)</li>
+          <li>A*, RRT*, Hybrid A* compared across <b>100+</b> simulated 3D environments</li>
+          <li>Carrier config intake cut from multiple days to <b>&lt; 15 min</b> at EchoStar</li>
+          <li>Presidential Scholar · Viterbi Scholar · CURVE Research Fellow</li>
+        </ul>
+        <p class="cta">
+          <a class="cta-primary" href={anHref['AN-001']}>Read AN-001: Ranger TVC</a>
+          <a class="cta-mail mono" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+        </p>
+      </div>
+      <div class="figure-block">
+        <Pinout />
+      </div>
+    </section>
+
+    <Section num="2" title="Description" id="description">
+      <p class="lede">
+        {NAME} is an electrical and computer engineering student at USC Viterbi who writes embedded flight
+        software. Current work: thrust vector control firmware for Ranger, the USC Liquid Propulsion Lab’s VTVL
+        hopper, on the GNC team. Research: real-time UAV path planning as a CURVE research fellow. Industry: network
+        configuration automation as a network engineering intern at EchoStar, summer 2026.
+      </p>
+    </Section>
+
+    <Section num="3" title="Pin Configuration and Functions" id="pin-functions">
+      <div class="table-scroll">
+        <table class="ds pins">
+          <caption><b>Table 1.</b> Pin functions. CORE = core skill; I/O = link.</caption>
+          <thead>
+            <tr><th scope="col">Pin</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Description</th></tr>
+          </thead>
+          <tbody>
+            {
+              allPins.map((p) => (
+                <tr data-pin={p.n}>
+                  <td class="num">{p.n}</td>
+                  <td class="mono">
+                    {p.href ? (
+                      <a href={p.href} {...(p.external ? { rel: 'me noopener' } : {})}>{p.name}</a>
+                    ) : (
+                      p.name
+                    )}
+                  </td>
+                  <td class="mono muted">{p.type}</td>
+                  <td>
+                    {p.fn.split(/(AN-\d{3})/).map((part) =>
+                      /^AN-\d{3}$/.test(part) ? <span class="nowrap">{part}</span> : part,
+                    )}
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </Section>
+
+    <Section num="4" title="Electrical Characteristics" id="electrical-characteristics">
+      <div class="table-scroll">
+        <table class="ds ec">
+          <caption><b>Table 2.</b> Skills, with the conditions under which each was demonstrated.</caption>
+          <thead>
+            <tr><th scope="col">Parameter</th><th scope="col">Test conditions</th><th scope="col">Ref</th></tr>
+          </thead>
+          {
+            skills.map((g) => (
+              <tbody>
+                <tr class="group"><th scope="rowgroup" colspan="3">{g.group}</th></tr>
+                {g.rows.map((r) => (
+                  <tr>
+                    <th scope="row" class="param">{r.param}</th>
+                    <td>{r.cond}</td>
+                    <td class="mono refs">
+                      {r.refs.map((ref) => (
+                        <a href={anHref[ref]}>{ref}</a>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+                {g.also && (
+                  <tr>
+                    <th scope="row" class="param muted">Also</th>
+                    <td class="muted">{g.also}</td>
+                    <td class="mono muted">—</td>
+                  </tr>
+                )}
+              </tbody>
+            ))
+          }
+        </table>
+      </div>
+    </Section>
+
+    <Section num="5" title="Application Notes" id="application-notes">
+      <div class="table-scroll">
+        <table class="ds an-index">
+          <caption><b>Table 3.</b> Projects, one application note each.</caption>
+          <thead>
+            <tr><th scope="col">No.</th><th scope="col">Title</th><th scope="col">Key spec</th><th scope="col">Status</th></tr>
+          </thead>
+          <tbody>
+            {
+              notes.map((n) => (
+                <tr>
+                  <td class="num">{n.data.an}</td>
+                  <td>
+                    <a class="an-title" href={`/notes/${n.id}/`}>{n.data.title}</a>
+                    <span class="an-org">{n.data.org}</span>
+                  </td>
+                  <td class="mono">{n.data.indexSpec}</td>
+                  <td><StatusMark status={n.data.status} /></td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </Section>
+
+    <Section num="6" title="Revision History" id="revision-history">
+      <div class="table-scroll">
+        <table class="ds revs">
+          <caption><b>Table 4.</b> Experience, newest first.</caption>
+          <thead>
+            <tr><th scope="col">Rev</th><th scope="col">Date</th><th scope="col">Changes</th></tr>
+          </thead>
+          <tbody>
+            {
+              revisions.map((r) => (
+                <tr>
+                  <td class="num">{r.rev}</td>
+                  <td class="mono date">{r.date}</td>
+                  <td>
+                    <span class="rev-role">{r.role}</span>
+                    <span class="rev-org">{r.org}</span>
+                    <span class="rev-note">
+                      {r.note}
+                      {r.an && (
+                        <>
+                          {' '}
+                          <a class="mono" href={anHref[r.an]}>{r.an}</a>
+                        </>
+                      )}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </Section>
+
+    <Section num="7" title="Ordering Information" id="ordering-information">
+      <figure class="decode" aria-labelledby="decode-cap">
+        <p class="decode-part mono" aria-hidden="true"><span>AB</span><span class="sep">-</span><span>ECE</span><span>28</span></p>
+        <dl class="decode-fields">
+          <div><dt class="mono">AB</dt><dd>Initials: Adit Bansal</dd></div>
+          <div><dt class="mono">ECE</dt><dd>Electrical and Computer Engineering</dd></div>
+          <div><dt class="mono">28</dt><dd>Graduation: May 2028</dd></div>
+        </dl>
+        <figcaption id="decode-cap" class="mono"><b>Figure 2.</b> Part number decode.</figcaption>
+      </figure>
+      <div class="order">
+        <div class="table-scroll">
+          <table class="ds">
+            <caption><b>Table 5.</b> Education and work authorization.</caption>
+            <tbody>
+              <tr><th scope="row" class="param">Part number</th><td class="mono">{PART}</td></tr>
+              <tr><th scope="row" class="param">Degree</th><td>B.S. Electrical and Computer Engineering</td></tr>
+              <tr><th scope="row" class="param">Institution</th><td>University of Southern California, Viterbi School of Engineering</td></tr>
+              <tr><th scope="row" class="param">Dates</th><td class="mono">Aug 2024 – May 2028</td></tr>
+              <tr><th scope="row" class="param">Honors</th><td>Presidential Scholar, Viterbi Scholar, CURVE Research Fellowship</td></tr>
+              <tr><th scope="row" class="param">Coursework</th><td>Embedded Systems, Linear Circuits, Linear Systems, Distributed Systems</td></tr>
+              <tr><th scope="row" class="param">Work authorization</th><td>US Citizen</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="contact">
+          <h3 class="contact-h">Contact</h3>
+          <a class="contact-mail mono" href={`mailto:${EMAIL}`}>{EMAIL}</a>
+          <ul class="contact-links mono">
+            <li><a href={GITHUB} rel="me noopener">github.com/aditbansal1</a></li>
+            <li><a href={LINKEDIN} rel="me noopener">linkedin.com/in/adit-bansal</a></li>
+          </ul>
+        </div>
+      </div>
+    </Section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
+    align-items: start;
+    padding-block: clamp(2rem, 1rem + 3vw, 3.5rem) 0;
+  }
+
+  h1 {
+    font-size: var(--step-4);
+    font-stretch: 72%;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 0.92;
+  }
+  .subtitle {
+    margin: 1rem 0 0;
+    font-size: var(--step-1);
+    line-height: 1.4;
+    color: var(--ink-2);
+    max-width: 30rem;
+  }
+
+  .features-h {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-top: clamp(1.75rem, 1rem + 2vw, 2.5rem);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--rule-strong);
+    font-size: var(--step-1);
+    font-stretch: 82%;
+  }
+  .features-h .n,
+  :global(.ds-section h2 .n) {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--copper);
+  }
+  .features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .features li {
+    position: relative;
+    padding: 0.5rem 0 0.5rem 1.1rem;
+    border-bottom: 1px solid var(--rule);
+    line-height: 1.4;
+  }
+  .features li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    width: 0.375rem;
+    height: 0.375rem;
+    background: var(--copper);
+  }
+  .features b {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 0.95em;
+    color: var(--copper);
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .cta-primary {
+    display: inline-block;
+    padding: 0.7rem 1rem;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 2px;
+    transition: background-color 160ms ease;
+  }
+  .cta-primary:hover {
+    background: var(--signal);
+  }
+  .cta-mail {
+    font-size: 0.9rem;
+    padding-block: 0.4rem;
+  }
+
+  .figure-block {
+    padding-top: 0.5rem;
+    align-self: center;
+  }
+
+  .lede {
+    font-size: var(--step-1);
+    line-height: 1.5;
+    max-width: 62ch;
+  }
+
+  .pins tr:global(.is-lit) > * {
+    background: var(--copper-soft);
+  }
+  .pins td:first-child {
+    width: 3rem;
+  }
+  .pins td:nth-child(2) {
+    white-space: nowrap;
+  }
+
+  .ec .param {
+    font-weight: 550;
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 2rem;
+  }
+  .ec .refs {
+    white-space: nowrap;
+    width: 1%;
+  }
+  .ec .refs a + a {
+    margin-left: 0.6rem;
+  }
+
+  .an-index td:first-child,
+  .revs td:first-child {
+    width: 4.5rem;
+    white-space: nowrap;
+  }
+  .an-title {
+    display: block;
+    font-weight: 600;
+    font-size: 1.0625rem;
+  }
+  .an-org {
+    display: block;
+    color: var(--ink-2);
+    font-size: 0.875rem;
+  }
+  .an-index td:nth-child(3) {
+    white-space: nowrap;
+  }
+
+  .revs .date {
+    white-space: nowrap;
+    width: 11rem;
+  }
+  .rev-role {
+    display: block;
+    font-weight: 600;
+  }
+  .rev-org {
+    display: block;
+    color: var(--ink-2);
+    font-size: 0.875rem;
+  }
+  .rev-note {
+    display: block;
+    margin-top: 0.25rem;
+  }
+
+  .decode {
+    margin: 0 0 2.5rem;
+  }
+  .decode-part {
+    display: flex;
+    gap: 0;
+    margin: 0;
+    font-size: clamp(2rem, 1.4rem + 2.5vw, 3rem);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .decode-part span:not(.sep) {
+    padding: 0 0.15em 0.35rem;
+    border-bottom: 2px solid var(--copper);
+  }
+  .decode-part span:nth-child(3),
+  .decode-part span:nth-child(4) {
+    margin-left: 0.25em;
+  }
+  .decode-part .sep {
+    color: var(--ink-2);
+    padding-bottom: 0.35rem;
+  }
+  .decode-fields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, max-content));
+    gap: 0.75rem 2.5rem;
+    margin: 1rem 0 0;
+  }
+  .decode-fields div {
+    border-left: 1px solid var(--copper);
+    padding-left: 0.75rem;
+  }
+  .decode-fields dt {
+    color: var(--copper);
+    font-size: 0.875rem;
+  }
+  .decode-fields dd {
+    margin: 0.15rem 0 0;
+    font-size: 0.9375rem;
+  }
+  .decode figcaption {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  .decode figcaption b {
+    font-weight: 400;
+    color: var(--ink);
+  }
+  @media (max-width: 40rem) {
+    .decode-fields {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  .order {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: clamp(2rem, 1rem + 3vw, 4rem);
+    align-items: start;
+  }
+  .order .param {
+    font-weight: 550;
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 2rem;
+  }
+  .contact {
+    border-top: 2px solid var(--rule-strong);
+    padding-top: 1rem;
+  }
+  .contact-h {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+  }
+  .contact-mail {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: clamp(1.05rem, 0.9rem + 0.6vw, 1.35rem);
+    overflow-wrap: anywhere;
+  }
+  .contact-links {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+  .contact-links a {
+    display: inline-block;
+    padding-block: 0.35rem;
+  }
+
+  @media (max-width: 64rem) {
+    .hero {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .title-block {
+      display: contents;
+    }
+    .hero {
+      gap: 0;
+    }
+    h1 { order: 1; }
+    .subtitle { order: 2; }
+    .figure-block { order: 3; padding-top: 2rem; }
+    .features-h { order: 4; margin-top: 2.5rem; }
+    .features { order: 5; }
+    .cta { order: 6; }
+    .hero > * {
+      min-width: 0;
+    }
+    .order {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 40rem) {
+    .ec thead {
+      display: none;
+    }
+    .ec tr:not(.group) {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.15rem 1rem;
+      padding-block: 0.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .ec tr:not(.group) > * {
+      border-bottom: 0;
+      padding: 0;
+    }
+    .ec tr:not(.group) > td:nth-child(2) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      color: var(--ink-2);
+      font-size: 0.875rem;
+    }
+    .ec .param {
+      white-space: normal;
+      width: auto;
+    }
+    .ec .group th {
+      display: block;
+    }
+    .ec tbody:last-child tr:last-child {
+      border-bottom: 0;
+    }
+    .an-index thead,
+    .revs thead {
+      display: none;
+    }
+    .an-index tr,
+    .revs tr {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.25rem 1rem;
+      padding-block: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .an-index tr > *,
+    .revs tr > * {
+      border: 0;
+      padding: 0;
+      width: auto !important;
+    }
+    .an-index td:nth-child(2) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .an-index td:nth-child(3) {
+      grid-row: 1;
+      grid-column: 2;
+      justify-self: start;
+      color: var(--copper);
+    }
+    .an-index td:nth-child(4) {
+      grid-column: 1 / -1;
+    }
+    .revs td:nth-child(3) {
+      grid-column: 1 / -1;
+    }
+    .pins td:nth-child(3),
+    .pins th:nth-child(3) {
+      display: none;
+    }
+  }
+</style>

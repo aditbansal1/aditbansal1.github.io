@@ -1,0 +1,32 @@
+---
+interface Props {
+  status: 'complete' | 'ongoing' | 'preliminary' | 'advance';
+}
+const { status } = Astro.props;
+const label = {
+  complete: 'Complete',
+  ongoing: 'Ongoing',
+  preliminary: 'Preliminary',
+  advance: 'Advance information',
+}[status];
+const stamp = status === 'preliminary' || status === 'advance';
+---
+
+<span class:list={['status', { stamp }]}>{label}</span>
+
+<style>
+  .status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .stamp {
+    color: var(--stamp);
+    border: 1.5px solid currentColor;
+    padding: 0.15rem 0.45rem;
+    border-radius: 2px;
+  }
+</style>

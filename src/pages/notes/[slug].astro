@@ -1,0 +1,45 @@
+---
+import { getCollection, render } from 'astro:content';
+import AppNoteLayout from '../../layouts/AppNoteLayout.astro';
+import RangerControlCycle from '../../components/figures/RangerControlCycle.astro';
+import UavTurnRadius from '../../components/figures/UavTurnRadius.astro';
+import EchoStarPipeline from '../../components/figures/EchoStarPipeline.astro';
+import CarryChain from '../../components/figures/CarryChain.astro';
+
+export async function getStaticPaths() {
+  const notes = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+  return notes.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, prev: notes[i - 1], next: notes[i + 1] },
+  }));
+}
+
+const figures = {
+  ranger: {
+    Comp: RangerControlCycle,
+    caption: 'One 50 Hz control cycle. Period and reply timeout to scale; other segment widths schematic.',
+  },
+  'uav-path-planning': {
+    Comp: UavTurnRadius,
+    caption: 'Why the vehicle changes the planner. Schematic, not simulation output.',
+  },
+  echostar: {
+    Comp: EchoStarPipeline,
+    caption: 'Pipeline stages. Validation gates everything downstream.',
+    wide: true,
+  },
+  'string-processor': {
+    Comp: CarryChain,
+    caption: 'The composability problem: N 1-bit adders need a carry chain between them.',
+  },
+} as const;
+
+const { entry, prev, next } = Astro.props;
+const { Content, headings } = await render(entry);
+const fig = figures[entry.id as keyof typeof figures];
+---
+
+<AppNoteLayout entry={entry} headings={headings} prev={prev} next={next} figureCaption={fig?.caption} wideFigure={fig && 'wide' in fig}>
+  {fig && <fig.Comp slot="figure" />}
+  <Content />
+</AppNoteLayout>

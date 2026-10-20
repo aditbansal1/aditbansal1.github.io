@@ -1,0 +1,104 @@
+---
+// Why vehicle type changes the planner: quads turn in place, fixed-wing aircraft cannot.
+---
+
+<div class="uav" role="group" aria-label="Quadcopter path versus fixed-wing path around an obstacle">
+  <svg viewBox="0 0 270 250" role="img" aria-labelledby="uav-q-t uav-q-d">
+    <title id="uav-q-t">Quadcopter: grid A* plus smoothing</title>
+    <desc id="uav-q-d">
+      A quadcopter can stop and turn in place, so a grid A* path with a sharp corner, then smoothed, is flyable.
+    </desc>
+    <text class="h" x="0" y="18">QUADCOPTER</text>
+    <rect class="obst" x="40" y="70" width="110" height="80" />
+    <path class="grid-path" d="M20 200 L190 200 L190 40" />
+    <circle class="corner" cx="190" cy="200" r="5" />
+    <text class="note" x="150" y="222">turns in place</text>
+    <circle class="end" cx="20" cy="200" r="4" />
+    <text class="lbl" x="12" y="224">S</text>
+    <circle class="end" cx="190" cy="40" r="4" />
+    <text class="lbl" x="200" y="44">G</text>
+    <text class="cap" x="0" y="246">Grid A* + smoothing</text>
+  </svg>
+
+  <svg viewBox="0 0 270 250" role="img" aria-labelledby="uav-f-t uav-f-d">
+    <title id="uav-f-t">Fixed-wing: Hybrid A*</title>
+    <desc id="uav-f-d">
+      A fixed-wing aircraft has a minimum turn radius, so the planner must build the path from kinematically
+      feasible arcs, which is what Hybrid A* does.
+    </desc>
+    <text class="h" x="0" y="18">FIXED-WING</text>
+    <rect class="obst" x="40" y="70" width="110" height="80" />
+    <path class="feasible" d="M20 200 L120 200 A70 70 0 0 0 190 130 L190 40" />
+    <path class="radius" d="M120 130 L120 200" />
+    <circle class="center" cx="120" cy="130" r="2.5" />
+    <text class="note" x="128" y="172">R min</text>
+    <circle class="end" cx="20" cy="200" r="4" />
+    <text class="lbl" x="12" y="224">S</text>
+    <circle class="end" cx="190" cy="40" r="4" />
+    <text class="lbl" x="200" y="44">G</text>
+    <text class="cap" x="0" y="246">Hybrid A*: feasible motion primitives</text>
+  </svg>
+</div>
+
+<style>
+  .uav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1.5rem 2.5rem;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    max-width: 22rem;
+    height: auto;
+    font-family: var(--font-mono);
+  }
+  .h {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    fill: var(--ink-2);
+  }
+  .obst {
+    fill: var(--paper-2);
+    stroke: var(--ink-2);
+    stroke-width: 1;
+  }
+  .grid-path,
+  .feasible {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linejoin: miter;
+  }
+  .grid-path {
+    stroke: var(--copper);
+  }
+  .feasible {
+    stroke: var(--signal);
+  }
+  .corner {
+    fill: var(--paper);
+    stroke: var(--copper);
+    stroke-width: 2;
+  }
+  .radius {
+    stroke: var(--ink);
+    stroke-width: 1;
+    stroke-dasharray: 3 3;
+  }
+  .center,
+  .end {
+    fill: var(--ink);
+  }
+  .lbl {
+    font-size: 12px;
+    fill: var(--ink);
+  }
+  .note {
+    font-size: 11px;
+    fill: var(--ink);
+  }
+  .cap {
+    font-size: 11.5px;
+    fill: var(--ink);
+  }
+</style>

@@ -1,0 +1,111 @@
+---
+const stages = [
+  { name: 'Ingest', detail: 'Carrier network documents' },
+  { name: 'Extract', detail: '1,000+ parameters: IP subnets, routing protocols, DNS records' },
+  { name: 'Validate', detail: 'Schema, IP/CIDR, overlapping subnets, required fields', gate: true },
+  { name: 'FastAPI', detail: 'REST API over the pipeline' },
+  { name: 'n8n', detail: 'Workflow drives provisioning' },
+  { name: 'JIRA', detail: 'Tickets opened and closed automatically' },
+];
+---
+
+<ol class="flow" aria-label="Pipeline stages, in order">
+  {
+    stages.map((s, i) => (
+      <li class:list={['stage', { gate: s.gate }]}>
+        <span class="idx mono">{String(i + 1).padStart(2, '0')}</span>
+        <span class="name">{s.name}</span>
+        <span class="detail">{s.detail}</span>
+        {s.gate && <span class="reject mono">Errors stop here, before any network state changes</span>}
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .flow {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    border-top: 2px solid var(--rule-strong);
+    border-bottom: 2px solid var(--rule-strong);
+  }
+  .stage {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 0.85rem 0.9rem 1rem;
+    border-right: 1px solid var(--rule);
+    font-size: 0.8125rem;
+    line-height: 1.35;
+  }
+  .stage:last-child {
+    border-right: 0;
+  }
+  /* Signal trace between stages. */
+  .stage:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -0.3rem;
+    top: 1.2rem;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--signal);
+    z-index: 1;
+  }
+  .idx {
+    font-size: 0.6875rem;
+    color: var(--ink-2);
+  }
+  .name {
+    font-weight: 650;
+    font-size: 0.9375rem;
+  }
+  .detail {
+    color: var(--ink-2);
+  }
+  .gate {
+    background: var(--copper-soft);
+    box-shadow: inset 0 3px 0 var(--copper);
+  }
+  .gate .name {
+    color: var(--copper);
+  }
+  .gate .detail {
+    color: var(--ink);
+  }
+  .reject {
+    margin-top: 0.4rem;
+    font-size: 0.6875rem;
+    color: var(--copper);
+  }
+  @media (max-width: 48rem) {
+    .flow {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .stage {
+      display: grid;
+      grid-template-columns: 2rem 6rem 1fr;
+      align-items: baseline;
+      border-right: 0;
+      border-bottom: 1px solid var(--rule);
+      padding: 0.7rem 0.5rem;
+    }
+    .stage:last-child {
+      border-bottom: 0;
+    }
+    .stage:not(:last-child)::after {
+      right: auto;
+      top: auto;
+      left: 0.5rem;
+      bottom: -0.3rem;
+    }
+    .reject {
+      grid-column: 2 / -1;
+    }
+  }
+</style>

@@ -1,0 +1,317 @@
+---
+import { leftPins, rightPins, type Pin } from '../data/pins';
+import { PART } from '../data/site';
+
+const rows = leftPins.length;
+const readoutText = (p: Pin) => `${p.fn}`;
+---
+
+<figure class="pinout" data-draw>
+  <div class="pkg" style={`--rows:${rows}`}>
+    <div class="body" aria-hidden="true">
+      <span class="notch"></span>
+      <span class="dot"></span>
+      <span class="mark">
+        <span class="mark-part">{PART}</span>
+        <span class="mark-sub">USC · ECE</span>
+      </span>
+    </div>
+
+    {
+      leftPins.map((p, i) => (
+        <>
+          <button
+            type="button"
+            class="label left"
+            style={`grid-row:${i + 1}`}
+            data-pin={p.n}
+            data-name={p.name}
+            data-type={p.type}
+            data-fn={readoutText(p)}
+          >
+            {p.name}
+          </button>
+          <span class="trace left copper" style={`grid-row:${i + 1};--i:${i}`} data-pin={p.n} aria-hidden="true" />
+          <span class="lead left" style={`grid-row:${i + 1}`} data-pin={p.n} aria-hidden="true" />
+          <span class="num left" style={`grid-row:${i + 1}`} aria-hidden="true">{p.n}</span>
+        </>
+      ))
+    }
+
+    {
+      rightPins.map((p, i) => (
+        <>
+          <span class="num right" style={`grid-row:${i + 1}`} aria-hidden="true">{p.n}</span>
+          <span class="lead right" style={`grid-row:${i + 1}`} data-pin={p.n} aria-hidden="true" />
+          <span class="trace right signal" style={`grid-row:${i + 1};--i:${i}`} data-pin={p.n} aria-hidden="true" />
+          <a
+            class="label right"
+            style={`grid-row:${i + 1}`}
+            href={p.href}
+            data-pin={p.n}
+            data-name={p.name}
+            data-type={p.type}
+            data-fn={readoutText(p)}
+            {...(p.external ? { rel: 'me noopener', target: '_blank' } : {})}
+          >
+            {p.name}
+            {p.external && <span class="visually-hidden"> (opens in a new tab)</span>}
+          </a>
+        </>
+      ))
+    }
+  </div>
+
+  <p class="readout mono" aria-live="polite">
+    <span class="readout-pin" data-readout-pin>PIN —</span>
+    <span class="readout-fn" data-readout-fn>Hover, focus, or tap a pin to read its function.</span>
+  </p>
+
+  <figcaption class="mono">
+    <b>Figure 1.</b> Pin configuration, 16-pin package, top view. Copper: core skills. Blue: links.
+  </figcaption>
+</figure>
+
+<script>
+  const fig = document.querySelector('.pinout');
+  const pinOut = fig?.querySelector<HTMLElement>('[data-readout-pin]');
+  const fnOut = fig?.querySelector<HTMLElement>('[data-readout-fn]');
+  const idle = fnOut?.textContent ?? '';
+  const show = (el: HTMLElement | null) => {
+    if (!pinOut || !fnOut) return;
+    if (!el) {
+      pinOut.textContent = 'PIN —';
+      fnOut.textContent = idle;
+      return;
+    }
+    pinOut.textContent = `PIN ${el.dataset.pin} · ${el.dataset.name} · ${el.dataset.type}`;
+    fnOut.textContent = el.dataset.fn ?? '';
+  };
+  fig?.querySelectorAll<HTMLElement>('.label').forEach((el) => {
+    el.addEventListener('pointerenter', () => show(el));
+    el.addEventListener('focus', () => show(el));
+    el.addEventListener('click', () => show(el));
+  });
+  fig?.querySelector('.pkg')?.addEventListener('pointerleave', () => {
+    if (!fig.contains(document.activeElement) || document.activeElement === document.body) show(null);
+  });
+</script>
+
+<style>
+  .pinout {
+    margin: 0;
+    --lead-w: clamp(0.6rem, 0.4rem + 0.8vw, 1.1rem);
+    --trace-min: clamp(0.75rem, 0.2rem + 2.4vw, 3rem);
+    --body-w: clamp(5.5rem, 3.5rem + 9vw, 11.5rem);
+    --row-h: clamp(2rem, 1.2rem + 2vw, 3.25rem);
+  }
+
+  .pkg {
+    display: grid;
+    grid-template-columns:
+      auto minmax(var(--trace-min), 1fr) var(--lead-w)
+      var(--body-w)
+      var(--lead-w) minmax(var(--trace-min), 1fr) auto;
+    grid-template-rows: repeat(var(--rows), var(--row-h));
+    padding-block: calc(var(--row-h) * 0.35);
+    align-items: center;
+    position: relative;
+  }
+
+  .body {
+    grid-column: 4;
+    grid-row: 1 / -1;
+    align-self: stretch;
+    margin-block: calc(var(--row-h) * -0.35);
+    background: var(--package);
+    border-radius: 3px;
+    position: relative;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--package-ink) var(--package-edge, 10%), transparent);
+  }
+  .notch {
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    width: 1.5rem;
+    height: 0.75rem;
+    transform: translateX(-50%);
+    background: var(--paper);
+    border-radius: 0 0 0.75rem 0.75rem;
+  }
+  .dot {
+    position: absolute;
+    top: 0.9rem;
+    left: 0.9rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--package-ink) 35%, transparent);
+  }
+  .mark {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    color: var(--package-ink);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+  .mark-part {
+    font-family: var(--font-sans);
+    font-stretch: 75%;
+    font-weight: 600;
+    font-size: clamp(1.25rem, 0.8rem + 1.8vw, 2.25rem);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+  .mark-sub {
+    font-family: var(--font-mono);
+    font-size: clamp(0.625rem, 0.55rem + 0.3vw, 0.8125rem);
+    letter-spacing: 0.12em;
+    opacity: 0.7;
+  }
+
+  .num {
+    grid-column: 4;
+    z-index: 1;
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    color: color-mix(in srgb, var(--package-ink) 70%, transparent);
+    padding-inline: 0.4rem;
+    pointer-events: none;
+  }
+  .num.left { justify-self: start; }
+  .num.right { justify-self: end; }
+
+  .lead {
+    height: 0.5rem;
+    background: var(--lead);
+    border-radius: 1px;
+  }
+  .lead.left { grid-column: 3; }
+  .lead.right { grid-column: 5; }
+
+  .trace {
+    height: 2px;
+    position: relative;
+    transition:
+      transform 700ms var(--ease-out) calc(var(--i) * 55ms + 150ms),
+      height 160ms ease;
+  }
+  .trace.left { grid-column: 2; transform-origin: right center; }
+  .trace.right { grid-column: 6; transform-origin: left center; }
+  .copper { background: var(--copper); }
+  .signal { background: var(--signal); }
+  /* Via pad where the trace meets its label. */
+  .trace::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    background: var(--paper);
+    transform: translateY(-50%);
+  }
+  .copper::before { color: var(--copper); }
+  .signal::before { color: var(--signal); }
+  .trace.left::before { left: -0.25rem; }
+  .trace.right::before { right: -0.25rem; }
+
+  :global(html.js) .pinout:not(.is-drawn) .trace {
+    transform: scaleX(0);
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: clamp(0.6875rem, 0.6rem + 0.35vw, 0.875rem);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    padding: 0.45rem 0.5rem;
+    border-radius: 2px;
+    white-space: nowrap;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease;
+  }
+  button.label {
+    grid-column: 1;
+    justify-self: end;
+    color: var(--ink);
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: clamp(0.6875rem, 0.6rem + 0.35vw, 0.875rem);
+  }
+  a.label {
+    grid-column: 7;
+    justify-self: start;
+    color: var(--signal);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.25em;
+  }
+
+  .label:global(.is-lit),
+  .label:hover,
+  .label:focus-visible {
+    color: var(--paper);
+  }
+  button.label:global(.is-lit),
+  button.label:hover,
+  button.label:focus-visible {
+    background: var(--copper);
+  }
+  a.label:global(.is-lit),
+  a.label:hover,
+  a.label:focus-visible {
+    background: var(--signal);
+    text-decoration-color: transparent;
+  }
+  .trace:global(.is-lit) {
+    height: 4px;
+  }
+
+  .readout {
+    margin: 1.25rem 0 0;
+    max-width: none;
+    min-height: 3.6em;
+    padding: 0.6rem 0.75rem;
+    border-top: 1px solid var(--rule-strong);
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    display: grid;
+    gap: 0.15rem;
+  }
+  .readout-pin {
+    color: var(--copper);
+    letter-spacing: 0.04em;
+  }
+  .readout-fn {
+    color: var(--ink);
+  }
+
+  figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+  }
+  figcaption b {
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .trace {
+      transition: none;
+    }
+    :global(html.js) .pinout:not(.is-drawn) .trace {
+      transform: none;
+    }
+  }
+</style>

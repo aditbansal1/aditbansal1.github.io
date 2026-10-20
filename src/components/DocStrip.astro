@@ -1,0 +1,83 @@
+---
+import { PART, REV } from '../data/site';
+
+interface Props {
+  label?: string;
+}
+const { label = 'Datasheet' } = Astro.props;
+const updated = new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+
+<header class="strip">
+  <div class="wrap strip-inner">
+    <a class="part" href="/" aria-label={`${PART}, home`}>{PART}</a>
+    <span class="label">{label}</span>
+    <span class="rev">Rev {REV} · {updated}</span>
+    <nav aria-label="Primary">
+      <a href="/#application-notes">Notes</a>
+      <a href="/#ordering-information">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .strip {
+    border-bottom: 1px solid var(--rule-strong);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+  }
+  .strip-inner {
+    display: flex;
+    align-items: stretch;
+    gap: 1.25rem;
+    min-height: 2.75rem;
+  }
+  .part {
+    display: flex;
+    align-items: center;
+    padding-inline: 0.75rem;
+    margin-left: -0.75rem;
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+  }
+  .part:hover {
+    background: var(--copper);
+  }
+  .label,
+  .rev {
+    display: flex;
+    align-items: center;
+    color: var(--ink-2);
+    text-transform: uppercase;
+  }
+  .rev {
+    margin-left: auto;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  nav a {
+    color: var(--ink);
+    text-decoration: none;
+    text-transform: uppercase;
+    padding-block: 0.75rem;
+  }
+  nav a:hover {
+    color: var(--signal);
+    text-decoration: underline;
+  }
+  @media (max-width: 40rem) {
+    .label,
+    .rev {
+      display: none;
+    }
+    nav {
+      margin-left: auto;
+    }
+  }
+</style>

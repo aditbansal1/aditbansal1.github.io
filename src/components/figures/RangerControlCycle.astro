@@ -1,0 +1,147 @@
+---
+// One 50 Hz control cycle. Period and reply timeout are to scale; other widths are schematic.
+const x0 = 104;
+const pxPerMs = 22;
+const t = (ms: number) => x0 + ms * pxPerMs;
+const end = t(20);
+---
+
+<div class="fig-scroll">
+  <svg viewBox={`0 0 ${end + 12} 268`} role="img" aria-labelledby="rcc-t rcc-d" class="rcc">
+    <title id="rcc-t">One control cycle of the TVC thread</title>
+    <desc id="rcc-d">
+      A 20 millisecond period at 50 hertz. The timer fires; the thread supervises, clamps and converts commands;
+      one CAN-FD frame goes to each actuator; the thread waits up to 5 milliseconds for both replies, decodes them
+      and publishes telemetry, then idles until the next tick.
+    </desc>
+
+    <g class="row-label">
+      <text x="0" y="50">TIMER</text>
+      <text x="0" y="107">THREAD</text>
+      <text x="0" y="185">CAN-FD</text>
+    </g>
+
+    <!-- Timer ticks -->
+    <g class="tick">
+      <line class="base" x1={t(0)} y1="54" x2={end} y2="54" />
+      <line x1={t(0)} y1="54" x2={t(0)} y2="26" />
+      <path d={`M${t(0) - 4} 33 L${t(0)} 25 L${t(0) + 4} 33`} />
+      <line x1={end} y1="54" x2={end} y2="26" />
+      <path d={`M${end - 4} 33 L${end} 25 L${end + 4} 33`} />
+    </g>
+
+    <!-- Thread activity -->
+    <g>
+      <rect class="work" x={t(0)} y="90" width={t(2.4) - t(0)} height="24" />
+      <rect class="tx" x={t(2.4)} y="90" width={t(3.2) - t(2.4)} height="24" />
+      <rect class="wait" x={t(3.2)} y="90" width={5 * pxPerMs} height="24" />
+      <text class="in wait-t" x={t(5.7)} y="106.5">wait</text>
+      <rect class="work" x={t(8.2)} y="90" width={t(10.4) - t(8.2)} height="24" />
+      <line class="idle" x1={t(10.4)} y1="102" x2={end} y2="102" />
+      <text class="lbl" x={t(0)} y="132">supervise, clamp, IK</text>
+      <text class="lbl" x={t(8.2)} y="132">decode, telemetry</text>
+      <text class="lbl muted" x={t(15.2)} y="94" text-anchor="middle">idle</text>
+    </g>
+
+    <!-- Reply timeout dimension -->
+    <g class="dim">
+      <line x1={t(3.2)} y1="70" x2={t(3.2)} y2="82" />
+      <line x1={t(8.2)} y1="70" x2={t(8.2)} y2="82" />
+      <line x1={t(3.2)} y1="76" x2={t(8.2)} y2="76" />
+      <text x={t(5.7)} y="68" text-anchor="middle">≤ 5 ms</text>
+    </g>
+
+    <!-- Bus frames -->
+    <g>
+      <line class="base" x1={t(0)} y1="181" x2={end} y2="181" />
+      <rect class="tx" x={t(2.4)} y="163" width="8" height="18" />
+      <rect class="tx" x={t(2.4) + 10} y="163" width="8" height="18" />
+      <text class="lbl" x={t(2.4) + 22} y="160">TX pitch, yaw</text>
+      <rect class="rx" x={t(5.2)} y="181" width="8" height="18" />
+      <rect class="rx" x={t(6.4)} y="181" width="8" height="18" />
+      <text class="lbl" x={t(6.4) + 14} y="198">RX replies</text>
+    </g>
+
+    <!-- Period dimension -->
+    <g class="dim">
+      <line x1={t(0)} y1="226" x2={t(0)} y2="244" />
+      <line x1={end} y1="226" x2={end} y2="244" />
+      <line x1={t(0)} y1="235" x2={end} y2="235" />
+      <text class="period" x={t(10)} y="260" text-anchor="middle">T = 20 ms (50 Hz)</text>
+    </g>
+  </svg>
+</div>
+
+<style>
+  .fig-scroll {
+    overflow-x: auto;
+  }
+  .rcc {
+    display: block;
+    width: 100%;
+    min-width: 32rem;
+    height: auto;
+    font-family: var(--font-mono);
+  }
+  .row-label text {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    fill: var(--ink-2);
+  }
+  .tick line,
+  .tick path {
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .base {
+    stroke: var(--rule) !important;
+    stroke-width: 1 !important;
+  }
+  .work {
+    fill: var(--copper-soft);
+    stroke: var(--copper);
+    stroke-width: 1.5;
+  }
+  .tx {
+    fill: var(--copper);
+  }
+  .rx {
+    fill: var(--signal);
+  }
+  .wait {
+    fill: var(--signal-soft);
+    stroke: var(--signal);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 3;
+  }
+  .in {
+    font-size: 12px;
+    text-anchor: middle;
+  }
+  .wait-t {
+    fill: var(--signal);
+  }
+  .idle {
+    stroke: var(--ink-2);
+    stroke-dasharray: 2 4;
+  }
+  .lbl {
+    font-size: 12px;
+    fill: var(--ink);
+  }
+  .muted {
+    fill: var(--ink-2);
+  }
+  .dim line {
+    stroke: var(--ink);
+    stroke-width: 1;
+  }
+  .dim text {
+    font-size: 12px;
+    fill: var(--ink);
+  }
+  .dim .period {
+    font-size: 13px;
+  }
+</style>

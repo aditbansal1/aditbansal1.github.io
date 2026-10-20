@@ -1,0 +1,87 @@
+---
+// Four 1-bit full adders: the carry is state that crosses instance boundaries.
+const bits = [3, 2, 1, 0];
+const w = 84;
+const gap = 44;
+const x = (i: number) => 40 + i * (w + gap);
+---
+
+<div class="fig-scroll">
+  <svg viewBox="0 0 600 210" role="img" aria-labelledby="cc-t cc-d" class="cc">
+    <title id="cc-t">A 4-bit ripple-carry adder built from four 1-bit adders</title>
+    <desc id="cc-d">
+      Four 1-bit full adders side by side. Each takes bits A and B from above and produces a sum bit below, but
+      each also needs the carry out of its neighbor. That carry chain is the out-of-band signal that stops N
+      1-bit instances from composing into an N-bit adder on their own.
+    </desc>
+    {
+      bits.map((b, i) => (
+        <g>
+          <line class="io" x1={x(i) + 28} y1="22" x2={x(i) + 28} y2="62" />
+          <line class="io" x1={x(i) + 56} y1="22" x2={x(i) + 56} y2="62" />
+          <text class="t" x={x(i) + 28} y="16" text-anchor="middle">A{b}</text>
+          <text class="t" x={x(i) + 56} y="16" text-anchor="middle">B{b}</text>
+          <rect class="fa" x={x(i)} y="62" width={w} height="64" />
+          <text class="fa-t" x={x(i) + w / 2} y="99" text-anchor="middle">1-bit FA</text>
+          <line class="io" x1={x(i) + w / 2} y1="126" x2={x(i) + w / 2} y2="160" />
+          <text class="t" x={x(i) + w / 2} y="176" text-anchor="middle">S{b}</text>
+          {i < bits.length - 1 && (
+            <>
+              <line class="carry" x1={x(i + 1)} y1="94" x2={x(i) + w + 6} y2="94" />
+              <path class="carry-head" d={`M${x(i) + w + 10} 89 L${x(i) + w} 94 L${x(i) + w + 10} 99`} />
+              <text class="ct" x={x(i) + w + gap / 2} y="86" text-anchor="middle">C{b}</text>
+            </>
+          )}
+        </g>
+      ))
+    }
+    <text class="note" x="300" y="202" text-anchor="middle">carry chain: state between instances</text>
+  </svg>
+</div>
+
+<style>
+  .fig-scroll {
+    overflow-x: auto;
+  }
+  .cc {
+    display: block;
+    width: 100%;
+    min-width: 30rem;
+    height: auto;
+    font-family: var(--font-mono);
+  }
+  .fa {
+    fill: var(--paper-2);
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+  .fa-t {
+    font-size: 11px;
+    fill: var(--ink);
+  }
+  .io {
+    stroke: var(--ink-2);
+    stroke-width: 1.5;
+  }
+  .t {
+    font-size: 11px;
+    fill: var(--ink-2);
+  }
+  .carry {
+    stroke: var(--copper);
+    stroke-width: 2.5;
+  }
+  .carry-head {
+    fill: none;
+    stroke: var(--copper);
+    stroke-width: 2.5;
+  }
+  .ct {
+    font-size: 11px;
+    fill: var(--copper);
+  }
+  .note {
+    font-size: 11.5px;
+    fill: var(--copper);
+  }
+</style>
