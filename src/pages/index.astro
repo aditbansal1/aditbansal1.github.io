@@ -7,7 +7,7 @@ import StatusMark from '../components/StatusMark.astro';
 import { leftPins, rightPins } from '../data/pins';
 import { skills } from '../data/skills';
 import { revisions } from '../data/experience';
-import { PART, NAME, EMAIL, GITHUB, LINKEDIN } from '../data/site';
+import { PART, NAME, TITLE, EMAIL, GITHUB, LINKEDIN } from '../data/site';
 
 const notes = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const anHref = Object.fromEntries(notes.map((n) => [n.data.an, `/notes/${n.id}/`]));
@@ -15,7 +15,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
 ---
 
 <BaseLayout
-  title={`${NAME} · Embedded & Aerospace Software Engineer`}
+  title={`${NAME} · ${TITLE}`}
   description="Adit Bansal, USC ECE '28. Embedded flight software for the Ranger VTVL hopper: Zephyr RTOS, C++, CAN-FD. Datasheet-style portfolio with application notes."
 >
   <div class="wrap">
@@ -23,7 +23,7 @@ const allPins = [...leftPins, ...rightPins].sort((a, b) => a.n - b.n);
       <div class="title-block">
         <h1 id="name">{NAME}</h1>
         <p class="subtitle">
-          Embedded and aerospace software engineer. B.S. Electrical and Computer Engineering, USC Viterbi, May 2028.
+          Embedded and electrical engineer. B.S. Electrical and Computer Engineering, USC Viterbi, May 2028.
         </p>
 
         <h2 class="features-h"><span class="n mono">1</span>Features</h2>
